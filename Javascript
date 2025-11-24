@@ -1,0 +1,42 @@
+// Utility function to clean and validate input
+function verifyCardNumber(cardNumber) {
+  // Remove spaces and dashes
+  const cleanedNumber = cardNumber.replace(/[\s-]/g, '');
+  if (!/^\d+$/.test(cleanedNumber)) {
+    return "INVALID!";
+  }
+  
+  const digits = Array.from(cleanedNumber).map(Number);
+  
+  // Apply Luhn Algorithm
+  for (let i = digits.length - 2; i >= 0; i -= 2) {
+    let doubled = digits[i] * 2;
+    if (doubled > 9) doubled -= 9;
+    digits[i] = doubled;
+  }
+  
+  const total = digits.reduce((sum, digit) => sum + digit, 0);
+  return total % 10 === 0 ? "VALID!" : "INVALID!";
+}
+
+// DOM Elements
+const inputField = document.getElementById('cardNumber');
+const validateBtn = document.getElementById('validateBtn');
+const resultDiv = document.getElementById('resultMessage');
+
+// Event Listener
+validateBtn.addEventListener('click', () => {
+  const cardNumber = inputField.value;
+  const result = verifyCardNumber(cardNumber);
+  
+  // Clear previous states
+  resultDiv.className = 'result';
+  
+  if (result === "VALID!") {
+    resultDiv.textContent = "✅ Card is valid!";
+    resultDiv.classList.add('valid');
+  } else {
+    resultDiv.textContent = "❌ Card is invalid!";
+    resultDiv.classList.add('invalid');
+  }
+});
